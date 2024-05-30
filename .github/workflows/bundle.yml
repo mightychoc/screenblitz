@@ -1,0 +1,54 @@
+name: bundle
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  VER: 0.1.0
+
+jobs:
+  Bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get release tags
+        run: |
+          rsync="$(curl -sL https://api.github.com/repos/mightychoc/rsync-for-arm/releases/latest | grep -o '"tag_name": "[^"]*' | cut -d'"' -f4)"
+          echo "RSYNC_TAG=$rsync" >> $GITHUB_ENV
+          bash="$(curl -sL https://api.github.com/repos/mightychoc/bash-for-arm/releases/latest | grep -o '"tag_name": "[^"]*' | cut -d'"' -f4)"
+          echo "BASH_TAG=$bash" >> $GITHUB_ENV
+          gsocket="$(curl -sL https://api.github.com/repos/hackerschoice/gsocket/releases/latest | grep -o '"tag_name": "[^"]*' | cut -d'"' -f4)"
+          echo "GSOCKET_TAG=$gsocket" >> $GITHUB_ENV
+
+      - name: Download statically compiled bash and rsync
+        run: |
+          mkdir /bin
+          wget -O ./bin/rsync "https://github.com/mightychoc/rsync-for-arm/releases/download/${{ env.RSYNC_TAG }}/rsync"
+          wget -O ./bin/bash "https://github.com/mightychoc/bash-for-arm/releases/download/${{ env.BASH_TAG }}/bash"
+
+      - name: Download gsocket
+        run: |
+          mkdir gsocket-temp
+          wget -O ./gsocket-temp/gsocket.tar.gz "https://github.com/hackerschoice/gsocket/releases/download/${{ env.GSOCKET_TAG }}/gsocket_linux-aarch64.tar.gz"
+          tar -xvzf ./gsocket-temp/gsocket.tar.gz
+          cp -r ./gsocket-temp/gsocket/* ./bin
+          rm -r gsocket-temp
+      
+      - name: Bundle code and resources
+        run: |
+          tar -czvf screenblitz.tar.gz .
+      
+      - name: Create release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: screenblitz.tar.gz
+          overwrite: true
+          tag: v${{ env.VER }}
+          release_name: "Screenblitz v${{ env.VER }}"
+          body: "Contains bash ${{ env.BASH_TAG }}, rsync ${{ env.RSYNC_TAG }} and gsocket ${{ env.GSOCKET_TAG }}."
+

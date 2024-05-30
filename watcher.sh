@@ -40,7 +40,7 @@ else
     export TIMEOUT=30
 fi
 
-# Check if SECRET is set - otherwise use 'screencrab' as default password
+# Check if SECRET is set - otherwise use 'screenblitz' as default password
 
 if [ -n "$SECRET" ]; then
     export SECRET="${SECRET#=*}"

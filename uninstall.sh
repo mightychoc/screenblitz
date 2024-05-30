@@ -36,23 +36,14 @@ mount -o remount,rw /dev/block/mmcblk0p1 /system
 
 # Remove all helper binaries
 remove /system/bin/bash 
-
 remove /system/bin/gs_funcs
-
 remove /system/bin/gs-netcat 
-
 remove /system/bin/gsocket_dso.so.0 
-
 remove /system/bin/gs-sftp 
-
 remove /system/bin/blitz
-
 remove /system/bin/gs-mount 
-
 remove /system/bin/gsocket 
-
 remove /system/bin/gsocket_uchroot_dso.so.0 
-
 remove /system/bin/rsync
 
 # Remove the autostart line from /etc/mkshrc
