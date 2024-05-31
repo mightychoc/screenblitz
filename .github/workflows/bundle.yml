@@ -27,21 +27,23 @@ jobs:
       - name: Download statically compiled bash and rsync
         run: |
           mkdir -p screenblitz/bin
-          wget -O ./screenblitz/bin/rsync "https://github.com/mightychoc/rsync-for-arm/releases/download/${{ env.RSYNC_TAG }}/rsync"
-          wget -O ./screenblitz/bin/bash "https://github.com/mightychoc/bash-for-arm/releases/download/${{ env.BASH_TAG }}/bash"
+          wget -O $GITHUB_WORKSPACE/screenblitz/bin/rsync "https://github.com/mightychoc/rsync-for-arm/releases/download/${{ env.RSYNC_TAG }}/rsync"
+          wget -O $GITHUB_WORKSPACE/screenblitz/bin/bash "https://github.com/mightychoc/bash-for-arm/releases/download/${{ env.BASH_TAG }}/bash"
 
       - name: Download gsocket
         run: |
           mkdir gsocket-temp
-          wget -O ./gsocket-temp/gsocket.tar.gz "https://github.com/hackerschoice/gsocket/releases/download/${{ env.GSOCKET_TAG }}/gsocket_linux-aarch64.tar.gz"
-          tar -xvzf ./gsocket-temp/gsocket.tar.gz
-          cp -r ./gsocket-temp/gsocket/* ./screenblitz/bin
+          wget -O $GITHUB_WORKSPACE/gsocket-temp/gsocket.tar.gz "https://github.com/hackerschoice/gsocket/releases/download/${{ env.GSOCKET_TAG }}/gsocket_linux-aarch64.tar.gz"
+          cd $GITHUB_WORKSPACE/gsocket-temp
+          tar -xvzf gsocket.tar.gz
+          rm -r gsocket.tar.gz
+          cp -r $GITHUB_WORKSPACE/gsocket-temp/* $GITHUB_WORKSPACE/screenblitz/bin
           rm -r gsocket-temp
       
       - name: Bundle code and resources
         run: |
-          cp -r . screenblitz/
-          tar -czvf screenblitz.tar.gz screenblitz/
+          cp -r $GITHUB_WORKSPACE/src/* $GITHUB_WORKSPACE/screenblitz
+          tar -czvf screenblitz.tar.gz $GITHUB_WORKSPACE/screenblitz/
       
       - name: Create release
         uses: svenstaro/upload-release-action@v2
