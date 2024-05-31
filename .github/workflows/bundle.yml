@@ -44,7 +44,7 @@ jobs:
       
       - name: Bundle code and resources
         run: |
-          cp -r src/* screenblitz
+          cp -r src/. screenblitz
           tar -czvf screenblitz.tar.gz screenblitz/
       
       - name: Create release
