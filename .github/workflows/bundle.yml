@@ -38,7 +38,7 @@ jobs:
           tar -xvzf gsocket.tar.gz
           rm -r gsocket.tar.gz
           cp -r $GITHUB_WORKSPACE/gsocket-temp/* $GITHUB_WORKSPACE/screenblitz/bin
-          rm -r gsocket-temp
+          rm -r $GITHUB_WORKSPACE/gsocket-temp
       
       - name: Bundle code and resources
         run: |
