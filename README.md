@@ -115,7 +115,7 @@ WIFI_PASS "MySecretPassword"
 
 ### Set Up `screenblitz`
 
-The configuration of `screenblitz` is pretty straight forward. Once you downloaded the code, open the `screenblitz/.env` file in your favourite text editor and specify your desired configuration:
+The configuration of `screenblitz` is pretty straight forward. Once you [downloaded the code](https://github.com/mightychoc/screenblitz/releases/latest), open the `screenblitz/.env` file in your favourite text editor and specify your desired configuration:
 
 ```yaml
 SECRET=<your-secret>
@@ -140,6 +140,26 @@ cp -r screenblitz /path/to/sd-card/mountpoint
 
 > [!CAUTION]
 > The installer script is expecting to find a directory called `screenblitz` on the microSD card. Make sure to copy the whole directory and not just its contents!
+
+### Set Up Folder Watcher
+
+
+Before we can start using our modified Screen Crab, we need to get the listening server up and running. If you have your own GSRN-server, don't forget to specify the `GSOCKET_IP` before starting the listener:
+
+```bash
+#Only run this line if you have your own Gsocket relay
+export GSOCKET_IP=<your-ip>
+
+cd /path/to/destination/directory
+blitz -s <your-secret> -l
+```
+
+![In development](https://img.shields.io/badge/Is_Client_listening_needed-red?style\=for-the-badge&logo\=adblock)
+
+>[!CAUTION]
+> It is crucial that the listener is running before the Screen Crab is booted up and trying to transfer captured files!
+
+> If you forgot to start the listener early, just start it and then reboot the Screen Crab. However, by nature of the intended usage of the Screen Crab, this can be tricky.
 
 ### Getting a Shell on the Screen Crab
 
@@ -182,39 +202,36 @@ To check that your connection is working, just `ping -c 5` your favourite wepage
 rtt min/avg/max/mdev = 149.790/224.146/445.605/112.644 ms
 ```
 
-### Set Up Folder Watcher
-
-
-Before we can start using our modified Screen Crab, we need to get the listening server up and running. If you have your own GSRN-server, don't forget to specify the `GSOCKET_IP` before starting the listener:
-
-```bash
-#Only run this line if you have your own Gsocket relay
-export GSOCKET_IP=<your-ip>
-
-cd /path/to/destination/directory
-blitz -s <your-secret> -l
-```
-
-![In development](https://img.shields.io/badge/Is_Client_listening_needed-red?style\=for-the-badge&logo\=adblock)
-
->[!CAUTION]
-> It is crucial that the listener is running before the Screen Crab is booted up and trying to transfer captured files!
-
-> If you forgot to start the listener early, just start it and then reboot the Screen Crab. However, by nature of the intended usage of the Screen Crab, this can be tricky.
-
 ### Finish Installation
 
+As we got an Internet connection as well as the listener up and runnning, the installation itself is pretty straight forward run the following commands to mount the file system as read-write, then copy the `screenblitz` directory and run `install.sh`:
 
+```bash
+mount -o remount,rw /dev/block/mmcblk0p1 /system
+cp -r /mnt/media_rw/<your-microSD>/screenblitz /system
+cd /system/screenblitz
+chmod 755 install.sh
+./install.sh
+```
 
+The install script will then copy all binaries to the dedicated place, adapt `/etc/mkshrc` to start the folder watcher after the boot process has finished and remount the filesystem as read-only.
 
+After the script has finished, reboot your Screen Crab and start extracting your images.
 
+### Uninstalling `screenblitz`
+
+If you want to revert the changes applied by `install.sh`, simply run `uninstall.sh`. 
 
 
 
 # Troubleshooting
 
-- Is GSOCKET_IP exported?
-- Is listener running before the crab?
-- use svc to enable/disable wifi card
+A little collection of common issues encountered when using `screenblitz`:
 
---> Maybe to a separate Markdown file?
+### rsync: connection unexpectedly closed
+
+If you see this message, this means that `screenblitz` is having troubles to find the listening party. There are multiple possibilities where this might come from:
+
+- Did you specify the `-l` flag on the listener?
+- If you are running your own GSRN-server, did you specify the `GSOCKET_IP` in `.env` on the Screen Crab? Did you define and export the variable on the listener?
+- Is the listener running before the Screen Crab is running?

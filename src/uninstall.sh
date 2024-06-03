@@ -60,7 +60,7 @@ else
 fi
 
 # Remove the screenblitz directory
-if [ -d "/system/screenblitz"]; then
+if [ -d "/system/screenblitz" ]; then
     log_info "Uninstalling screenblitz directory"
     rm -r /system/screenblitz
 else

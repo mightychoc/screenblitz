@@ -18,24 +18,18 @@ log_error() {
    echo -e "\e[31m[ERROR] - $1\e[0m"
 }
 
-# Mount the file system of the screencrab as read-write
-log_info "Mounting file system as read-write"
-mount -o remount,rw /dev/block/mmcblk0p1 /system
-
-log_info "Copying screenblitz folder to /system"
-cp -r "/mnt/media_rw/$(ls /mnt/media_rw)/screenblitz" /system
-
 # Make binaries executable
 log_info "Changing permissions of binaries"
 chmod 755 /system/screenblitz/bin/*
 chmod 755 /system/screenblitz/watcher.sh
+chmod 755 /system/screenblitz/uninstall.sh
 
 # Copy helper binaries to /system/bin
 log_info "Moving helper binaries to /system/bin"
 mv /system/screenblitz/bin/* /system/bin
 
 # Remove the helper binaries from the SD-card
-log_info "Removing helper binaries from SD-card"
+log_info "Removing helper binaries from screenblitz directory"
 rm -r /system/screenblitz/bin
 
 # Add the watcher script to the boot process
@@ -58,7 +52,7 @@ mount -o remount,ro /dev/block/mmcblk0p1 /system
 echo -e "\n------------ SUMMARY ------------\n"
 
 log_success "Finished installation of screenblitz."
-loc_info "Please check the details below and then restart the crab to start blitzing files."
+log_info "Please check the details below and then restart the crab to start blitzing files."
 
 if [ ! -f "/system/screenblitz/.env" ]; then
     log_error "No .env file found in /system/screenblitz/"
