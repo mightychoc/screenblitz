@@ -17,7 +17,6 @@ github.com/mightychoc/screenblitz
 ```
 
 [![Github release](https://img.shields.io/github/release/mightychoc/screenblitz\?style\=for-the-badge&logo\=github&color\=008000)](https://github.com/mightychoc/screenblitz/releases/)
-![In development](https://img.shields.io/badge/Under_Construction!-red?style\=for-the-badge&logo\=adblock)
 
 <!-- [![Github all downloads](https://img.shields.io/github/downloads/mightychoc/screenblitz/total\?style\=for-the-badge)](https://GitHub.com/mightychoc/screenblitz/) -->
 
@@ -42,13 +41,12 @@ If you just want to get started using `screenblitz` quickly, follow these steps.
 
 - Get a shell running on your crab and run:
     ```bash
-    cd /mnt/media_rw/<your-microSD>/screenblitz
+    mount -o remount,rw /dev/block/mmcblk0p1 /system
+    cp -r /mnt/media_rw/<your-microSD>/screenblitz /system
+    cd /system/screenblitz
+    chmod 755 install.sh
     ./install.sh
     ```
-
-![In development](https://img.shields.io/badge/Is_Client_listening_needed-red?style\=for-the-badge&logo\=adblock)
-![In development](https://img.shields.io/badge/Check_if_chmod_is_necessary-red?style\=for-the-badge&logo\=adblock)
-
 - Wait for the installation to finish, then reboot
 - Connect the Screen Crab to the target device
 - Grab your loot using `blitz -s <your-secret> -l` inside your destination folder
@@ -136,8 +134,6 @@ Next, copy the entire `screenblitz` directory to the root directory of your micr
 cp -r screenblitz /path/to/sd-card/mountpoint
 ```
 
-![In development](https://img.shields.io/badge/Check_if_chmod_is_necessary-red?style\=for-the-badge&logo\=adblock)
-
 > [!CAUTION]
 > The installer script is expecting to find a directory called `screenblitz` on the microSD card. Make sure to copy the whole directory and not just its contents!
 
@@ -154,17 +150,7 @@ cd /path/to/destination/directory
 blitz -s <your-secret> -l
 ```
 
-![In development](https://img.shields.io/badge/Is_Client_listening_needed-red?style\=for-the-badge&logo\=adblock)
-
->[!CAUTION]
-> It is crucial that the listener is running before the Screen Crab is booted up and trying to transfer captured files!
-
-> If you forgot to start the listener early, just start it and then reboot the Screen Crab. However, by nature of the intended usage of the Screen Crab, this can be tricky.
-
 ### Getting a Shell on the Screen Crab
-
-![In development](https://img.shields.io/badge/Check_warranty-red?style\=for-the-badge&logo\=adblock)
-
 
 In order to install `screenblitz` we need to have a terminal on the Screen Crab. In order to get there, start by removing the top cover of your Screen Crab (other side of where you plug in your microSD). Wire the Crab to a serial bus adapter by connecting **RX <-> TX**, **TX <-> RX** and **GND <-> GND** but do not yet plug the adapter into your machine. Run `sudo dmesg -w` on your machine and plug the adapter into your device. You should see something like this:
 
@@ -222,8 +208,6 @@ After the script has finished, reboot your Screen Crab and start extracting your
 
 If you want to revert the changes applied by `install.sh`, simply run `uninstall.sh`. 
 
-
-
 # Troubleshooting
 
 A little collection of common issues encountered when using `screenblitz`:
@@ -232,6 +216,6 @@ A little collection of common issues encountered when using `screenblitz`:
 
 If you see this message, this means that `screenblitz` is having troubles to find the listening party. There are multiple possibilities where this might come from:
 
-- Did you specify the `-l` flag on the listener?
-- If you are running your own GSRN-server, did you specify the `GSOCKET_IP` in `.env` on the Screen Crab? Did you define and export the variable on the listener?
-- Is the listener running before the Screen Crab is running?
+- [ ] Is the listener running?
+- [ ] Did you specify the `-l` flag on the listener?
+- [ ] If you are running your own GSRN-server, did you specify the `GSOCKET_IP` in `.env` on the Screen Crab? Did you define and export the variable on the listener?
